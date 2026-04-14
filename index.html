@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WFV Helper</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #1a1a1a;
+  --surface: #242424;
+  --surface2: #2e2e2e;
+  --border: #3a3a3a;
+  --accent: #c8a84b;
+  --accent2: #8b5e3c;
+  --text: #e8e0d0;
+  --text-dim: #888;
+  --danger: #c0392b;
+  --ok: #27ae60;
+  --warn: #e67e22;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ── Phase 1: Header ── */
+#p1-header {
+  background: #111;
+  border-bottom: 2px solid var(--accent2);
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+#p1-header h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+#rp-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.rp-block { display: flex; flex-direction: column; align-items: center; }
+.rp-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+.rp-value { font-size: 18px; font-weight: 700; }
+.rp-value.ok { color: var(--ok); }
+.rp-value.warn { color: var(--warn); }
+.rp-value.over { color: var(--danger); }
+.rp-sep { color: var(--border); font-size: 20px; }
+
+/* ── Mission Settings ── */
+#mission-settings {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.setting-group { display: flex; flex-direction: column; gap: 4px; }
+.setting-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+
+input[type="number"], input[type="text"] {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+input[type="number"] { width: 80px; }
+input[type="text"] { width: 200px; }
+
+#ext-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 700px;
+}
+
+.ext-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ext-tag input { display: none; }
+.ext-tag.active { border-color: var(--accent); background: #3a2e10; color: var(--accent); }
+
+/* ── Start button ── */
+#start-btn-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-primary {
+  background: var(--accent2);
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: #a0703a; }
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+.btn-danger:hover { background: #a93226; }
+
+/* ── Slots Grid ── */
+#slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+/* ── Soldier Slot (Phase 1) ── */
+.slot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.slot-header {
+  background: var(--surface2);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.slot-num {
+  background: var(--accent2);
+  color: #fff;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.slot-rp-mini { margin-left: auto; font-size: 12px; color: var(--accent); font-weight: 700; }
+
+.soldier-picker {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-row { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.filter-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.15s;
+}
+.filter-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 5px 8px;
+  border-radius: 4px;
+  width: 100%;
+  font-size: 13px;
+  cursor: pointer;
+}
+select option { background: var(--surface2); }
+
+.soldier-info { padding: 8px 10px; border-bottom: 1px solid var(--border); display: none; }
+.soldier-info.visible { display: block; }
+
+.soldier-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.stat { display: flex; flex-direction: column; align-items: center; }
+.stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+.stat-value { font-size: 14px; font-weight: 700; }
+
+.soldier-notes { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+
+.loadout-bar { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; }
+.loadout-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.loadout-fill { height: 100%; background: var(--ok); border-radius: 3px; transition: width 0.2s, background 0.2s; }
+.loadout-fill.warn { background: var(--warn); }
+.loadout-fill.over { background: var(--danger); }
+
+.gear-section { padding: 8px 10px; display: none; }
+.gear-section.visible { display: block; }
+
+.gear-tabs { display: flex; gap: 2px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.gear-tab {
+  background: none; border: none; color: var(--text-dim);
+  padding: 4px 12px; cursor: pointer; font-size: 12px;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.gear-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.gear-list { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; }
+
+.gear-item {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 5px 8px; font-size: 12px;
+  cursor: pointer; transition: border-color 0.15s;
+}
+.gear-item:hover { border-color: var(--accent2); }
+.gear-item.selected { border-color: var(--accent); background: #2a2410; }
+
+.gear-name { flex: 1; font-weight: 500; }
+.gear-rp { color: var(--accent); font-weight: 700; font-size: 11px; min-width: 24px; text-align: right; }
+.gear-wt { color: var(--text-dim); font-size: 10px; min-width: 28px; text-align: right; }
+.gear-effect { color: var(--text-dim); font-size: 10px; }
+
+.selected-gear { padding: 6px 10px 8px; display: none; border-top: 1px solid var(--border); }
+.selected-gear.visible { display: block; }
+.selected-gear-title { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.selected-gear-list { display: flex; flex-direction: column; gap: 2px; }
+.selected-gear-item { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.selected-gear-item.is-starting { background: #222; border-radius: 3px; opacity: 0.7; }
+
+.starting-gear-btn {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 1px 5px; border-radius: 3px; cursor: pointer; font-size: 12px;
+  flex-shrink: 0; transition: all 0.1s; line-height: 1.4;
+}
+.starting-gear-btn.on { border-color: var(--accent); color: var(--accent); background: #2a2410; }
+.starting-gear-btn:hover { border-color: var(--accent2); }
+
+.remove-gear {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  width: 16px; height: 16px; border-radius: 2px; cursor: pointer;
+  font-size: 11px; line-height: 1; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.1s;
+}
+.remove-gear:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+.clear-soldier {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 11px;
+  margin-left: auto; transition: all 0.1s;
+}
+.clear-soldier:hover { border-color: var(--danger); color: var(--danger); }
+
+.nps-note { font-size: 11px; color: var(--text-dim); padding: 6px 10px; font-style: italic; }
+
+/* ═══════════════════════════════
+   Phase 2 styles
+═══════════════════════════════ */
+#phase2 { display: none; }
+#phase2.active { display: block; }
+#phase1 { display: block; }
+#phase1.hidden { display: none; }
+
+/* P2 Header */
+#p2-header {
+  background: #111;
+  border-bottom: 2px solid #5a3e20;
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#p2-mission-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.p2-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+
+.p2-counter-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+.p2-counter-value { font-size: 20px; font-weight: 700; min-width: 28px; text-align: center; }
+
+.counter-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 28px; height: 28px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s;
+}
+.counter-btn:hover { background: var(--accent2); border-color: var(--accent2); }
+.counter-btn:disabled { opacity: 0.3; cursor: default; }
+
+#p2-header-actions { margin-left: auto; display: flex; gap: 8px; }
+
+/* P2 Cards grid */
+#p2-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+/* Soldier card (Phase 2) */
+.soldier-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.soldier-card.kia {
+  border-color: var(--danger);
+  background: #1f1010;
+}
+
+.sc-header {
+  background: var(--surface2);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sc-name { font-size: 14px; font-weight: 700; flex: 1; }
+
+.type-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--accent2);
+  color: #fff;
+}
+
+.kia-badge {
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.sc-stats {
+  padding: 10px 12px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.sc-stat-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.sc-stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+
+.sc-stat-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sc-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: center;
+}
+
+.sc-stat-value.hp-ok { color: var(--ok); }
+.sc-stat-value.hp-warn { color: var(--warn); }
+.sc-stat-value.hp-dead { color: var(--danger); }
+
+.sc-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 32px; height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s;
+  flex-shrink: 0;
+}
+.sc-btn:hover { background: var(--accent2); border-color: var(--accent2); }
+.sc-btn:disabled { opacity: 0.3; cursor: default; background: var(--surface2); }
+
+.sc-max-hp { font-size: 10px; color: var(--text-dim); }
+
+/* Gear list (Phase 2) */
+.sc-gear { padding: 8px 12px; }
+.sc-gear-title { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; }
+
+.sc-gear-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.sc-gear-item:last-child { border-bottom: none; }
+
+.sc-gear-item.expended {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.sc-gear-name { flex: 1; }
+.sc-gear-cat { font-size: 10px; color: var(--text-dim); }
+
+.expend-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: all 0.1s;
+}
+.expend-btn:hover { background: var(--warn); border-color: var(--warn); color: #fff; }
+
+.sc-notes { padding: 6px 12px 8px; font-size: 11px; color: var(--text-dim); }
+
+/* ═══════════════════════════════
+   Main nav tabs
+═══════════════════════════════ */
+#main-nav {
+  background: #111;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 2px;
+}
+#main-nav.hidden { display: none; }
+
+.nav-tab {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  padding: 10px 18px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav-tab:hover:not(.active) { color: var(--text); }
+
+.nav-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-right: 16px;
+}
+
+/* ═══════════════════════════════
+   Phase 3 — Result screen
+═══════════════════════════════ */
+#phase3-result { display: none; }
+#phase3-result.active { display: flex; justify-content: center; padding: 32px 16px; }
+
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+}
+
+.result-header {
+  background: var(--surface2);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-header h2 { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+
+.result-meta { display: flex; gap: 20px; font-size: 13px; color: var(--text-dim); }
+.result-meta strong { color: var(--text); }
+
+.result-table { width: 100%; border-collapse: collapse; }
+.result-table th {
+  text-align: left; padding: 8px 20px; font-size: 11px;
+  color: var(--text-dim); text-transform: uppercase; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.result-table td { padding: 10px 20px; font-size: 13px; border-bottom: 1px solid var(--border); }
+.result-table tr:last-child td { border-bottom: none; }
+
+.result-xp { color: var(--accent); font-weight: 700; }
+.result-kia { color: var(--danger); font-weight: 700; }
+.result-survived { color: var(--ok); }
+
+.result-actions {
+  padding: 16px 20px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+/* ═══════════════════════════════
+   Phase 3 — Campaign screen
+═══════════════════════════════ */
+#phase3-campaign { display: none; }
+#phase3-campaign.active { display: block; }
+
+.p3-toolbar {
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+
+.p3-toolbar-right { margin-left: auto; display: flex; gap: 8px; }
+
+#p3-soldiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.p3-soldier-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.p3-soldier-card.kia {
+  opacity: 0.55;
+  border-color: var(--danger);
+}
+
+.p3-sc-header {
+  background: var(--surface2);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+.p3-sc-header:hover { background: #333; }
+
+.p3-sc-name { font-size: 14px; font-weight: 700; flex: 1; }
+.p3-sc-meta { font-size: 11px; color: var(--text-dim); }
+.p3-sc-chevron { font-size: 10px; color: var(--text-dim); transition: transform 0.2s; }
+.p3-sc-chevron.open { transform: rotate(180deg); }
+
+.p3-sc-summary {
+  padding: 8px 14px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.p3-stat { display: flex; flex-direction: column; align-items: center; }
+.p3-stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+.p3-stat-value { font-size: 16px; font-weight: 700; }
+
+.p3-sc-detail { display: none; }
+.p3-sc-detail.open { display: block; }
+
+.p3-section {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.p3-section:last-child { border-bottom: none; }
+.p3-section-title { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+  margin: 2px;
+}
+.skill-remove {
+  background: none; border: none; color: var(--text-dim);
+  cursor: pointer; font-size: 12px; padding: 0; line-height: 1;
+}
+.skill-remove:hover { color: var(--danger); }
+
+.skill-add-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
+}
+.skill-add-row input[type="text"] { flex: 1; font-size: 12px; padding: 3px 8px; }
+.skill-add-row select { flex: 1; font-size: 12px; }
+
+.history-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 12px;
+  border-bottom: 1px solid #333;
+}
+.history-row:last-child { border-bottom: none; }
+.history-mission { flex: 1; font-weight: 500; }
+.history-xp { color: var(--accent); min-width: 40px; text-align: right; }
+.history-survived { font-size: 11px; }
+
+.empty-campaign {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<!-- Main nav (hidden during Phase 2) -->
+<nav id="main-nav">
+  <span class="nav-title">WFV Helper</span>
+  <button class="nav-tab active" onclick="showTab('team')" id="tab-team">編成</button>
+  <button class="nav-tab" onclick="showTab('campaign')" id="tab-campaign">キャンペーン</button>
+</nav>
+
+<!-- ═══ PHASE 1 ═══ -->
+<div id="phase1">
+  <div id="p1-header">
+    <div id="rp-summary">
+      <div class="rp-block">
+        <span class="rp-label">使用RP</span>
+        <span class="rp-value" id="rp-used">0</span>
+      </div>
+      <span class="rp-sep">/</span>
+      <div class="rp-block">
+        <span class="rp-label">上限</span>
+        <span class="rp-value" id="rp-limit-disp">—</span>
+      </div>
+      <span class="rp-sep">|</span>
+      <div class="rp-block">
+        <span class="rp-label">残り</span>
+        <span class="rp-value" id="rp-remaining">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="mission-settings">
+    <div class="setting-group">
+      <span class="setting-label">ミッション名</span>
+      <input type="text" id="mission-name" placeholder="例: Fortunate Son">
+    </div>
+    <div class="setting-group">
+      <span class="setting-label">RP上限</span>
+      <input type="number" id="rp-limit" value="" placeholder="例: 40" min="1" max="999">
+    </div>
+    <div class="setting-group">
+      <span class="setting-label">拡張パック</span>
+      <div id="ext-checkboxes"></div>
+    </div>
+  </div>
+
+  <div id="start-btn-row">
+    <button class="btn-primary" onclick="startMission()">▶ 作戦開始</button>
+    <span style="font-size:12px;color:var(--text-dim)">兵士を1名以上編成してください</span>
+  </div>
+
+  <div id="slots"></div>
+</div>
+
+<!-- ═══ PHASE 2 ═══ -->
+<div id="phase2">
+  <div id="p2-header">
+    <span id="p2-mission-name">ミッション</span>
+
+    <div class="p2-counter">
+      <span class="p2-counter-label">ターン</span>
+      <span class="p2-counter-value" id="p2-turn">1</span>
+      <button class="counter-btn" onclick="p2IncrTurn()">+</button>
+    </div>
+
+    <div class="p2-counter">
+      <span class="p2-counter-label">BC合計</span>
+      <button class="counter-btn" onclick="p2DecrBC()">−</button>
+      <span class="p2-counter-value" id="p2-bc">0</span>
+      <button class="counter-btn" onclick="p2IncrBC()">+</button>
+    </div>
+
+    <div id="p2-header-actions">
+      <button class="btn-secondary" onclick="backToPhase1()">← 編成に戻る</button>
+      <button class="btn-danger" onclick="endMission()">ミッション終了</button>
+    </div>
+  </div>
+
+  <div id="p2-cards"></div>
+</div>
+
+<!-- ═══ PHASE 3: Mission Result ═══ -->
+<div id="phase3-result">
+  <div class="result-card">
+    <div class="result-header">
+      <h2 id="r-mission-name">ミッション完了</h2>
+      <div class="result-meta">
+        <span>ターン: <strong id="r-turns">—</strong></span>
+        <span>BC合計: <strong id="r-bc">—</strong></span>
+      </div>
+    </div>
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>兵士</th>
+          <th>獲得XP</th>
+          <th>状態</th>
+        </tr>
+      </thead>
+      <tbody id="r-soldiers"></tbody>
+    </table>
+    <div class="result-actions">
+      <button class="btn-primary" onclick="saveToCampaign()">キャンペーンに保存</button>
+      <button class="btn-secondary" onclick="discardResult()">破棄</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 3: Campaign Screen ═══ -->
+<div id="phase3-campaign">
+  <div class="p3-toolbar">
+    <span style="font-size:13px;color:var(--text-dim)" id="p3-mission-count"></span>
+    <div class="p3-toolbar-right">
+      <button class="btn-secondary" onclick="exportCampaign()">JSONエクスポート</button>
+      <label class="btn-secondary" style="cursor:pointer">
+        JSONインポート
+        <input type="file" accept=".json" style="display:none" onchange="importCampaign(event)">
+      </label>
+      <button class="btn-danger" onclick="newCampaign()">新規キャンペーン</button>
+    </div>
+  </div>
+  <div id="p3-soldiers"></div>
+</div>
+
+<script>
+// ── Data ──
+let SOLDIERS = [];
+let GEAR = [];
+let EXTENSIONS = [];
+
+// ── Phase 1 state ──
+const state = {
+  rpLimit: null,
+  missionName: '',
+  activeExts: new Set(),
+  slots: Array.from({length: 6}, () => ({
+    soldier: null,
+    selectedGear: [],
+    gearTab: 'Weapon',
+    typeFilter: 'ALL',
+    nationFilter: 'ALL',
+  }))
+};
+
+// ── Phase 2 state ──
+let p2state = null; // set on startMission()
+
+// ── Init ──
+async function init() {
+  [SOLDIERS, GEAR, EXTENSIONS] = await Promise.all([
+    fetch('soldiers.json').then(r => r.json()),
+    fetch('gear.json').then(r => r.json()),
+    fetch('extensions.json').then(r => r.json()),
+  ]);
+
+  EXTENSIONS.forEach(e => state.activeExts.add(e));
+
+  // Restore Phase 2 if in progress
+  const saved = localStorage.getItem('wfv_p2');
+  if (saved) {
+    p2state = JSON.parse(saved);
+    showPhase2(); // hides nav
+    renderP2();
+    return;
+  }
+
+  // Phase 1 default: show nav
+  document.getElementById('main-nav').classList.remove('hidden');
+
+  renderExtensions();
+  renderSlots();
+  bindMissionSettings();
+}
+
+// ── Phase 1 ──
+function renderExtensions() {
+  const el = document.getElementById('ext-checkboxes');
+  el.innerHTML = '';
+  EXTENSIONS.forEach(ext => {
+    const tag = document.createElement('label');
+    tag.className = 'ext-tag' + (state.activeExts.has(ext) ? ' active' : '');
+    tag.innerHTML = `<input type="checkbox" ${state.activeExts.has(ext) ? 'checked' : ''}><span>${ext}</span>`;
+    tag.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) state.activeExts.add(ext);
+      else state.activeExts.delete(ext);
+      tag.classList.toggle('active', e.target.checked);
+      state.slots.forEach((_, i) => refreshSoldierDropdown(i));
+    });
+    el.appendChild(tag);
+  });
+}
+
+function bindMissionSettings() {
+  document.getElementById('rp-limit').addEventListener('input', e => {
+    state.rpLimit = e.target.value ? parseInt(e.target.value) : null;
+    updateRPSummary();
+  });
+  document.getElementById('mission-name').addEventListener('input', e => {
+    state.missionName = e.target.value;
+  });
+}
+
+function slotRP(slot) {
+  if (!slot.soldier) return 0;
+  const gearRP = slot.selectedGear
+    .filter(g => !g.isStartingGear)
+    .reduce((s, g) => s + (g.rp || 0), 0);
+  return (slot.soldier.rp || 0) + gearRP;
+}
+
+function totalRP() {
+  return state.slots.reduce((s, slot) => s + slotRP(slot), 0);
+}
+
+function updateRPSummary() {
+  const used = totalRP();
+  const limit = state.rpLimit;
+  const remaining = limit != null ? limit - used : null;
+
+  document.getElementById('rp-used').textContent = used;
+  document.getElementById('rp-limit-disp').textContent = limit ?? '—';
+
+  const remEl = document.getElementById('rp-remaining');
+  remEl.textContent = remaining != null ? remaining : '—';
+  remEl.className = 'rp-value' + (remaining == null ? '' : remaining < 0 ? ' over' : remaining < 5 ? ' warn' : ' ok');
+
+  state.slots.forEach((slot, i) => {
+    const el = document.querySelector(`#slot-${i} .slot-rp-mini`);
+    if (el) el.textContent = `RP: ${slotRP(slot)}`;
+  });
+}
+
+function renderSlots() {
+  const container = document.getElementById('slots');
+  container.innerHTML = '';
+  state.slots.forEach((_, i) => container.appendChild(buildSlotEl(i)));
+}
+
+function buildSlotEl(i) {
+  const slot = state.slots[i];
+  const div = document.createElement('div');
+  div.className = 'slot';
+  div.id = `slot-${i}`;
+
+  div.innerHTML = `
+    <div class="slot-header">
+      <span class="slot-num">${i + 1}</span>
+      <span>${slot.soldier ? slot.soldier.name : '空き'}</span>
+      <span class="slot-rp-mini">RP: ${slotRP(slot)}</span>
+    </div>
+    <div class="soldier-picker">
+      <div class="filter-row" id="type-filter-${i}">
+        ${['ALL','PS','TS','NPS','SQS'].map(t =>
+          `<button class="filter-btn${slot.typeFilter === t ? ' active' : ''}" data-type="${t}">${t}</button>`
+        ).join('')}
+      </div>
+      <div class="filter-row" id="nation-filter-${i}">
+        ${['ALL','US','ARVN','AUS'].map(n =>
+          `<button class="filter-btn${slot.nationFilter === n ? ' active' : ''}" data-nation="${n}">${n}</button>`
+        ).join('')}
+      </div>
+      <select id="soldier-select-${i}">
+        <option value="">— 兵士を選択 —</option>
+      </select>
+    </div>
+    <div class="soldier-info${slot.soldier ? ' visible' : ''}" id="soldier-info-${i}"></div>
+    <div class="gear-section${slot.soldier && canSelectGear(slot.soldier) ? ' visible' : ''}" id="gear-section-${i}">
+      <div class="gear-tabs">
+        ${['Weapon','Skill','Equipment'].map(tab =>
+          `<button class="gear-tab${slot.gearTab === tab ? ' active' : ''}" data-tab="${tab}">${tab}</button>`
+        ).join('')}
+      </div>
+      <div class="gear-list" id="gear-list-${i}"></div>
+    </div>
+    <div class="selected-gear${slot.selectedGear.length ? ' visible' : ''}" id="selected-gear-${i}">
+      <div class="selected-gear-title">選択中の装備</div>
+      <div class="selected-gear-list" id="selected-gear-list-${i}"></div>
+    </div>
+    ${slot.soldier && !canSelectGear(slot.soldier) ? `<div class="nps-note">${slot.soldier.type === 'NPS' ? 'NPS: 装備選択不可（初期装備のみ）' : 'SQS: RPのみ管理'}</div>` : ''}
+  `;
+
+  div.querySelectorAll('#type-filter-' + i + ' .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      slot.typeFilter = btn.dataset.type;
+      div.querySelectorAll('#type-filter-' + i + ' .filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      refreshSoldierDropdown(i);
+    });
+  });
+
+  div.querySelectorAll('#nation-filter-' + i + ' .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      slot.nationFilter = btn.dataset.nation;
+      div.querySelectorAll('#nation-filter-' + i + ' .filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      refreshSoldierDropdown(i);
+    });
+  });
+
+  div.querySelectorAll('.gear-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      slot.gearTab = btn.dataset.tab;
+      div.querySelectorAll('.gear-tab').forEach(b => b.classList.toggle('active', b === btn));
+      refreshGearList(i);
+    });
+  });
+
+  const sel = div.querySelector(`#soldier-select-${i}`);
+  sel.addEventListener('change', () => {
+    slot.soldier = SOLDIERS.find(s => s.id === sel.value) || null;
+    slot.selectedGear = [];
+    refreshSlot(i);
+  });
+
+  refreshSoldierDropdown(i);
+  if (slot.soldier) {
+    renderSoldierInfo(i);
+    refreshGearList(i);
+    renderSelectedGear(i);
+  }
+
+  return div;
+}
+
+function canSelectGear(soldier) {
+  return soldier && (soldier.type === 'PS' || soldier.type === 'TS');
+}
+
+function refreshSoldierDropdown(i) {
+  const slot = state.slots[i];
+  const sel = document.getElementById(`soldier-select-${i}`);
+  if (!sel) return;
+
+  const kiaNames = getKIASoldierNames();
+  const filtered = SOLDIERS.filter(s => {
+    if (!state.activeExts.has(s.extensionGroup)) return false;
+    if (slot.typeFilter !== 'ALL' && s.type !== slot.typeFilter) return false;
+    if (slot.nationFilter !== 'ALL' && s.nation !== slot.nationFilter) return false;
+    if (kiaNames.has(s.name)) return false;
+    return true;
+  });
+
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— 兵士を選択 —</option>';
+  filtered.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.nation} ${s.type} RP:${s.rp}) [${s.extensionGroup}]`;
+    if (s.id === prev) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function renderSoldierInfo(i) {
+  const slot = state.slots[i];
+  const s = slot.soldier;
+  const el = document.getElementById(`soldier-info-${i}`);
+  if (!el || !s) return;
+
+  const loadoutUsed = slot.selectedGear
+    .filter(g => !g.isStartingGear)
+    .reduce((sum, g) => sum + (g.weight || 0), 0);
+  const loadoutMax = s.loadout;
+  const hasLoadout = loadoutMax != null;
+  const loadoutPct = hasLoadout ? Math.min(100, (loadoutUsed / loadoutMax) * 100) : 0;
+  const loadoutClass = hasLoadout && loadoutUsed > loadoutMax ? 'over' : hasLoadout && loadoutUsed > loadoutMax * 0.8 ? 'warn' : '';
+
+  el.innerHTML = `
+    <div class="soldier-stats">
+      <div class="stat"><span class="stat-label">RP</span><span class="stat-value" style="color:var(--accent)">${s.rp}</span></div>
+      ${s.hp != null ? `<div class="stat"><span class="stat-label">HP</span><span class="stat-value">${s.hp}</span></div>` : ''}
+      ${s.hth ? `<div class="stat"><span class="stat-label">HTH</span><span class="stat-value">${s.hth}</span></div>` : ''}
+      ${hasLoadout ? `<div class="stat"><span class="stat-label">Loadout</span><span class="stat-value">${loadoutUsed}/${loadoutMax}</span></div>` : ''}
+      <div class="stat"><span class="stat-label">Type</span><span class="stat-value" style="font-size:12px">${s.type}</span></div>
+      <button class="clear-soldier" onclick="clearSlot(${i})">✕ 外す</button>
+    </div>
+    ${hasLoadout ? `
+    <div class="loadout-bar">
+      <span style="font-size:10px;color:var(--text-dim)">Loadout</span>
+      <div class="loadout-track"><div class="loadout-fill ${loadoutClass}" style="width:${loadoutPct}%"></div></div>
+      <span style="font-size:10px;color:${loadoutClass === 'over' ? 'var(--danger)' : 'var(--text-dim)'}">${loadoutUsed}/${loadoutMax}</span>
+    </div>` : ''}
+    ${s.notes ? `<div class="soldier-notes">${s.notes}</div>` : ''}
+  `;
+  el.classList.add('visible');
+}
+
+function refreshGearList(i) {
+  const slot = state.slots[i];
+  const el = document.getElementById(`gear-list-${i}`);
+  if (!el) return;
+
+  const filtered = GEAR.filter(g =>
+    state.activeExts.has(g.extensionGroup) && g.category === slot.gearTab
+  );
+
+  el.innerHTML = '';
+  filtered.forEach(g => {
+    const isSelected = slot.selectedGear.some(s => s.id === g.id);
+    const item = document.createElement('div');
+    item.className = 'gear-item' + (isSelected ? ' selected' : '');
+    item.innerHTML = `
+      <span class="gear-name">${g.name}</span>
+      <span class="gear-effect">${g.effect || ''}</span>
+      <span class="gear-wt">${g.weight != null ? `W:${g.weight}` : ''}</span>
+      <span class="gear-rp">RP:${g.rp}</span>
+    `;
+    item.addEventListener('click', () => toggleGear(i, g));
+    el.appendChild(item);
+  });
+}
+
+function toggleGear(i, g) {
+  const slot = state.slots[i];
+  const idx = slot.selectedGear.findIndex(s => s.id === g.id);
+  if (idx >= 0) slot.selectedGear.splice(idx, 1);
+  else slot.selectedGear.push({ ...g, isStartingGear: false });
+  refreshGearList(i);
+  renderSelectedGear(i);
+  renderSoldierInfo(i);
+  updateRPSummary();
+}
+
+function toggleStartingGear(i, gearId) {
+  const g = state.slots[i].selectedGear.find(g => g.id === gearId);
+  if (!g) return;
+  g.isStartingGear = !g.isStartingGear;
+  renderSelectedGear(i);
+  renderSoldierInfo(i);
+  updateRPSummary();
+}
+
+function renderSelectedGear(i) {
+  const slot = state.slots[i];
+  const container = document.getElementById(`selected-gear-${i}`);
+  const list = document.getElementById(`selected-gear-list-${i}`);
+  if (!container || !list) return;
+
+  if (slot.selectedGear.length === 0) { container.classList.remove('visible'); return; }
+  container.classList.add('visible');
+
+  list.innerHTML = '';
+  slot.selectedGear.forEach(g => {
+    const row = document.createElement('div');
+    row.className = 'selected-gear-item' + (g.isStartingGear ? ' is-starting' : '');
+    const rpDisplay = g.isStartingGear
+      ? `<span style="color:var(--text-dim);font-size:11px;text-decoration:line-through">RP:${g.rp}</span>`
+      : `<span style="color:var(--accent);font-weight:700">RP:${g.rp}</span>`;
+    row.innerHTML = `
+      <button class="remove-gear" onclick="removeGear(${i}, '${g.id}')">✕</button>
+      <span style="flex:1">${g.name}</span>
+      <span style="color:var(--text-dim);font-size:10px">${g.category}</span>
+      ${g.weight != null && !g.isStartingGear ? `<span style="color:var(--text-dim);font-size:10px">W:${g.weight}</span>` : ''}
+      ${rpDisplay}
+      <button class="starting-gear-btn${g.isStartingGear ? ' on' : ''}" onclick="toggleStartingGear(${i}, '${g.id}')" title="初期装備フラグ（RP・Loadout除外）">${g.isStartingGear ? '⭐' : '☆'}</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function removeGear(i, gearId) {
+  state.slots[i].selectedGear = state.slots[i].selectedGear.filter(g => g.id !== gearId);
+  refreshGearList(i);
+  renderSelectedGear(i);
+  renderSoldierInfo(i);
+  updateRPSummary();
+}
+
+function clearSlot(i) {
+  state.slots[i].soldier = null;
+  state.slots[i].selectedGear = [];
+  refreshSlot(i);
+}
+
+function refreshSlot(i) {
+  const slotEl = document.getElementById(`slot-${i}`);
+  if (!slotEl) return;
+  slotEl.replaceWith(buildSlotEl(i));
+  updateRPSummary();
+}
+
+// ── Phase 1 → Phase 2 transition ──
+function startMission() {
+  const activeSoldiers = state.slots.filter(s => s.soldier);
+  if (activeSoldiers.length === 0) {
+    alert('兵士を1名以上選択してください。');
+    return;
+  }
+
+  p2state = {
+    missionName: state.missionName || 'ミッション',
+    turn: 1,
+    bc: 0,
+    soldiers: activeSoldiers.map(slot => {
+      const s = slot.soldier;
+      const hasHP = s.hp != null && (s.type === 'PS' || s.type === 'TS');
+      const hasXP = s.type !== 'SQS';
+      return {
+        name: s.name,
+        type: s.type,
+        nation: s.nation,
+        notes: s.notes || '',
+        maxHp: hasHP ? s.hp : null,
+        currentHp: hasHP ? s.hp : null,
+        currentXp: hasXP ? 0 : null,
+        isKIA: false,
+        gear: slot.selectedGear.map(g => ({
+          id: g.id,
+          name: g.name,
+          category: g.category,
+          consumable: g.consumable || false,
+          expended: false,
+        })),
+      };
+    }),
+  };
+
+  saveP2();
+  showPhase2();
+  renderP2();
+}
+
+function showPhase2() {
+  hideAllScreens();
+  document.getElementById('phase2').classList.add('active');
+  document.getElementById('main-nav').classList.add('hidden');
+}
+
+function showPhase1() {
+  hideAllScreens();
+  document.getElementById('phase1').classList.remove('hidden');
+  document.getElementById('main-nav').classList.remove('hidden');
+  setActiveTab('team');
+}
+
+function hideAllScreens() {
+  document.getElementById('phase1').classList.add('hidden');
+  document.getElementById('phase2').classList.remove('active');
+  document.getElementById('phase3-result').classList.remove('active');
+  document.getElementById('phase3-campaign').classList.remove('active');
+}
+
+function showTab(tab) {
+  hideAllScreens();
+  document.getElementById('main-nav').classList.remove('hidden');
+  setActiveTab(tab);
+  if (tab === 'team') {
+    document.getElementById('phase1').classList.remove('hidden');
+  } else if (tab === 'campaign') {
+    document.getElementById('phase3-campaign').classList.add('active');
+    renderCampaign();
+  }
+}
+
+function setActiveTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  if (el) el.classList.add('active');
+}
+
+function backToPhase1() {
+  if (!confirm('編成画面に戻りますか？\n作戦状態は保存されています。')) return;
+  showPhase1();
+}
+
+// ── Phase 2 ──
+function saveP2() {
+  localStorage.setItem('wfv_p2', JSON.stringify(p2state));
+}
+
+function renderP2() {
+  document.getElementById('p2-mission-name').textContent = p2state.missionName;
+  document.getElementById('p2-turn').textContent = p2state.turn;
+  document.getElementById('p2-bc').textContent = p2state.bc;
+
+  const container = document.getElementById('p2-cards');
+  container.innerHTML = '';
+  p2state.soldiers.forEach((sol, i) => {
+    container.appendChild(buildSoldierCard(sol, i));
+  });
+}
+
+function buildSoldierCard(sol, i) {
+  const card = document.createElement('div');
+  card.className = 'soldier-card' + (sol.isKIA ? ' kia' : '');
+  card.id = `p2-card-${i}`;
+
+  const hasHP = sol.maxHp != null;
+  const hasXP = sol.currentXp != null;
+
+  let hpClass = 'hp-ok';
+  if (hasHP) {
+    if (sol.currentHp === 0) hpClass = 'hp-dead';
+    else if (sol.currentHp <= Math.ceil(sol.maxHp / 2)) hpClass = 'hp-warn';
+  }
+
+  // Stats row
+  let statsHTML = '';
+  if (hasHP) {
+    statsHTML += `
+      <div class="sc-stat-group">
+        <span class="sc-stat-label">HP</span>
+        <div class="sc-stat-controls">
+          <button class="sc-btn" onclick="p2ChangeHP(${i}, -1)" ${sol.isKIA ? 'disabled' : ''}>−</button>
+          <span class="sc-stat-value ${hpClass}">${sol.currentHp}</span>
+          <button class="sc-btn" onclick="p2ChangeHP(${i}, +1)" ${sol.currentHp >= sol.maxHp || sol.isKIA ? 'disabled' : ''}>+</button>
+        </div>
+        <span class="sc-max-hp">/ ${sol.maxHp}</span>
+      </div>
+    `;
+  }
+  if (hasXP) {
+    statsHTML += `
+      <div class="sc-stat-group">
+        <span class="sc-stat-label">XP</span>
+        <div class="sc-stat-controls">
+          <button class="sc-btn" onclick="p2ChangeXP(${i}, -1)" ${sol.currentXp <= 0 ? 'disabled' : ''}>−</button>
+          <span class="sc-stat-value" style="color:var(--accent)">${sol.currentXp}</span>
+          <button class="sc-btn" onclick="p2ChangeXP(${i}, +1)">+</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // Gear list
+  let gearHTML = '';
+  if (sol.gear.length > 0) {
+    const gearItems = sol.gear.map((g, gi) => {
+      if (!g.consumable) {
+        return `<div class="sc-gear-item">
+          <span class="sc-gear-name">${g.name}</span>
+          <span class="sc-gear-cat">${g.category}</span>
+        </div>`;
+      }
+      return `<div class="sc-gear-item${g.expended ? ' expended' : ''}">
+        <span class="sc-gear-name">${g.name}</span>
+        <span class="sc-gear-cat">${g.category}</span>
+        ${!g.expended ? `<button class="expend-btn" onclick="p2Expend(${i}, ${gi})">使用</button>` : '<span style="font-size:10px;color:var(--text-dim)">Expended</span>'}
+      </div>`;
+    }).join('');
+
+    gearHTML = `
+      <div class="sc-gear">
+        <div class="sc-gear-title">装備</div>
+        ${gearItems}
+      </div>
+    `;
+  }
+
+  // Notes (NPS shows notes as reference)
+  const notesHTML = sol.notes && sol.type === 'NPS'
+    ? `<div class="sc-notes">${sol.notes}</div>`
+    : '';
+
+  card.innerHTML = `
+    <div class="sc-header">
+      <span class="sc-name">${sol.name}</span>
+      <span class="type-badge">${sol.type}</span>
+      ${sol.isKIA ? '<span class="kia-badge">KIA</span>' : ''}
+    </div>
+    ${statsHTML || notesHTML ? `<div class="sc-stats">${statsHTML}</div>` : ''}
+    ${gearHTML}
+    ${notesHTML}
+  `;
+
+  return card;
+}
+
+function p2ChangeHP(i, delta) {
+  const sol = p2state.soldiers[i];
+  if (!sol || sol.maxHp == null) return;
+  sol.currentHp = Math.max(0, Math.min(sol.maxHp, sol.currentHp + delta));
+  sol.isKIA = sol.currentHp === 0;
+  saveP2();
+  refreshP2Card(i);
+}
+
+function p2ChangeXP(i, delta) {
+  const sol = p2state.soldiers[i];
+  if (!sol || sol.currentXp == null) return;
+  sol.currentXp = Math.max(0, sol.currentXp + delta);
+  saveP2();
+  refreshP2Card(i);
+}
+
+function p2Expend(i, gi) {
+  const sol = p2state.soldiers[i];
+  if (!sol || !sol.gear[gi]) return;
+  sol.gear[gi].expended = true;
+  saveP2();
+  refreshP2Card(i);
+}
+
+function p2IncrTurn() {
+  p2state.turn++;
+  document.getElementById('p2-turn').textContent = p2state.turn;
+  saveP2();
+}
+
+function p2IncrBC() {
+  p2state.bc++;
+  document.getElementById('p2-bc').textContent = p2state.bc;
+  saveP2();
+}
+
+function p2DecrBC() {
+  if (p2state.bc <= 0) return;
+  p2state.bc--;
+  document.getElementById('p2-bc').textContent = p2state.bc;
+  saveP2();
+}
+
+function refreshP2Card(i) {
+  const existing = document.getElementById(`p2-card-${i}`);
+  if (!existing) return;
+  const newCard = buildSoldierCard(p2state.soldiers[i], i);
+  existing.replaceWith(newCard);
+}
+
+// Pending result (waiting for save/discard decision)
+let pendingResult = null;
+
+function endMission() {
+  if (!confirm(`「${p2state.missionName}」を終了しますか？\nターン: ${p2state.turn} / BC: ${p2state.bc}`)) return;
+
+  pendingResult = {
+    completedAt: new Date().toISOString().slice(0, 10),
+    missionName: p2state.missionName,
+    totalTurns: p2state.turn,
+    totalBc: p2state.bc,
+    soldiers: p2state.soldiers.map(sol => ({
+      soldierId: sol.id || null,
+      name: sol.name,
+      type: sol.type,
+      nation: sol.nation || '',
+      earnedXp: sol.currentXp ?? 0,
+      isKIA: sol.isKIA,
+    })),
+  };
+
+  localStorage.removeItem('wfv_p2');
+  p2state = null;
+
+  showResultScreen(pendingResult);
+}
+
+function showResultScreen(result) {
+  hideAllScreens();
+  document.getElementById('main-nav').classList.remove('hidden');
+  setActiveTab('team');
+  document.getElementById('phase3-result').classList.add('active');
+
+  document.getElementById('r-mission-name').textContent = result.missionName;
+  document.getElementById('r-turns').textContent = result.totalTurns;
+  document.getElementById('r-bc').textContent = result.totalBc;
+
+  const tbody = document.getElementById('r-soldiers');
+  tbody.innerHTML = '';
+  result.soldiers.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${s.name} <span style="font-size:10px;color:var(--text-dim)">${s.type}/${s.nation}</span></td>
+      <td class="result-xp">+${s.earnedXp}</td>
+      <td>${s.isKIA ? '<span class="result-kia">KIA 💀</span>' : '<span class="result-survived">生存</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function saveToCampaign() {
+  if (!pendingResult) return;
+  const campaign = loadCampaign();
+
+  // Register mission
+  const missionId = (campaign.missions.length > 0
+    ? Math.max(...campaign.missions.map(m => m.id)) + 1 : 1);
+  campaign.missions.push({
+    id: missionId,
+    name: pendingResult.missionName,
+    date: pendingResult.completedAt,
+    turns: pendingResult.totalTurns,
+    totalBc: pendingResult.totalBc,
+  });
+
+  // Update soldier records
+  pendingResult.soldiers.forEach(ps => {
+    let rec = campaign.soldiers.find(s => s.name === ps.name && s.type === ps.type);
+    if (!rec) {
+      rec = {
+        id: ps.soldierId,
+        name: ps.name,
+        type: ps.type,
+        nation: ps.nation,
+        isKIA: false,
+        totalXp: 0,
+        totalBc: 0,
+        missionCount: 0,
+        skills: [],
+        history: [],
+      };
+      campaign.soldiers.push(rec);
+    }
+    rec.totalXp += ps.earnedXp;
+    rec.missionCount += 1;
+    if (ps.isKIA) rec.isKIA = true;
+    rec.history.push({
+      missionId,
+      missionName: pendingResult.missionName,
+      earnedXp: ps.earnedXp,
+      bc: 0,
+      survived: !ps.isKIA,
+    });
+  });
+
+  saveCampaign(campaign);
+  pendingResult = null;
+  showTab('campaign');
+}
+
+function discardResult() {
+  if (!confirm('このミッション結果を破棄しますか？')) return;
+  pendingResult = null;
+  showPhase1();
+}
+
+// ── Campaign data ──
+function loadCampaign() {
+  const raw = localStorage.getItem('wfv_campaign');
+  if (!raw) return { version: 1, createdAt: new Date().toISOString().slice(0, 10), missions: [], soldiers: [] };
+  const data = JSON.parse(raw);
+  // Migrate old array format
+  if (Array.isArray(data)) return { version: 1, createdAt: new Date().toISOString().slice(0, 10), missions: [], soldiers: [] };
+  return data;
+}
+
+function saveCampaign(data) {
+  localStorage.setItem('wfv_campaign', JSON.stringify(data));
+}
+
+// ── Campaign screen ──
+function renderCampaign() {
+  const campaign = loadCampaign();
+  const container = document.getElementById('p3-soldiers');
+  const countEl = document.getElementById('p3-mission-count');
+
+  countEl.textContent = `ミッション ${campaign.missions.length}回 / 兵士 ${campaign.soldiers.length}名`;
+
+  if (campaign.soldiers.length === 0) {
+    container.innerHTML = '<div class="empty-campaign">キャンペーン記録なし。<br>ミッションを終了して「キャンペーンに保存」してください。</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  // Sort: alive first, then KIA
+  const sorted = [...campaign.soldiers].sort((a, b) => a.isKIA - b.isKIA);
+  sorted.forEach(sol => {
+    container.appendChild(buildP3SoldierCard(sol, campaign));
+  });
+}
+
+function buildP3SoldierCard(sol, campaign) {
+  const card = document.createElement('div');
+  card.className = 'p3-soldier-card' + (sol.isKIA ? ' kia' : '');
+  const detailId = `p3-detail-${sol.name.replace(/\s/g, '_')}`;
+
+  const skillsHTML = sol.skills.length > 0
+    ? sol.skills.map((sk, si) => `
+        <span class="skill-tag">
+          ${sk}
+          <button class="skill-remove" onclick="removeSkill('${sol.name}', ${si})">✕</button>
+        </span>`).join('')
+    : '<span style="color:var(--text-dim);font-size:12px">なし</span>';
+
+  const historyHTML = sol.history.length > 0
+    ? sol.history.map(h => `
+        <div class="history-row">
+          <span class="history-mission">${h.missionName}</span>
+          <span class="history-xp">+${h.earnedXp} XP</span>
+          <span class="history-survived">${h.survived ? '生存' : '<span style="color:var(--danger)">KIA</span>'}</span>
+        </div>`).join('')
+    : '<div style="font-size:12px;color:var(--text-dim)">履歴なし</div>';
+
+  // Skill options from gear.json
+  const skillOptions = GEAR
+    .filter(g => g.category === 'Skill')
+    .map(g => `<option value="${g.name}">${g.name}</option>`)
+    .join('');
+
+  card.innerHTML = `
+    <div class="p3-sc-header" onclick="toggleP3Detail('${detailId}', this)">
+      <span class="p3-sc-name">${sol.name}</span>
+      <span class="p3-sc-meta">${sol.type} / ${sol.nation}</span>
+      ${sol.isKIA ? '<span class="kia-badge">KIA</span>' : '<span style="font-size:11px;color:var(--ok)">生存</span>'}
+      <span class="p3-sc-chevron">▼</span>
+    </div>
+    <div class="p3-sc-summary">
+      <div class="p3-stat"><span class="p3-stat-label">累計XP</span><span class="p3-stat-value" style="color:var(--accent)">${sol.totalXp}</span></div>
+      <div class="p3-stat"><span class="p3-stat-label">参加</span><span class="p3-stat-value">${sol.missionCount}回</span></div>
+      ${sol.skills.length > 0 ? `<div style="font-size:11px;color:var(--text-dim);align-self:center">スキル: ${sol.skills.join(' / ')}</div>` : ''}
+    </div>
+    <div class="p3-sc-detail" id="${detailId}">
+      <div class="p3-section">
+        <div class="p3-section-title">習得スキル</div>
+        <div id="skills-${detailId}">${skillsHTML}</div>
+        <div class="skill-add-row">
+          <select id="skill-sel-${detailId}">
+            <option value="">— スキルを選択 —</option>
+            ${skillOptions}
+          </select>
+          <input type="text" id="skill-txt-${detailId}" placeholder="または自由入力">
+          <button class="btn-secondary" onclick="addSkill('${sol.name}', '${detailId}')">追加</button>
+        </div>
+      </div>
+      <div class="p3-section">
+        <div class="p3-section-title">ミッション履歴</div>
+        ${historyHTML}
+      </div>
+    </div>
+  `;
+
+  return card;
+}
+
+function toggleP3Detail(detailId, headerEl) {
+  const detail = document.getElementById(detailId);
+  if (!detail) return;
+  const isOpen = detail.classList.toggle('open');
+  headerEl.querySelector('.p3-sc-chevron').classList.toggle('open', isOpen);
+}
+
+function addSkill(soldierName, detailId) {
+  const sel = document.getElementById('skill-sel-' + detailId);
+  const txt = document.getElementById('skill-txt-' + detailId);
+  const skill = txt.value.trim() || sel.value;
+  if (!skill) return;
+
+  const campaign = loadCampaign();
+  const sol = campaign.soldiers.find(s => s.name === soldierName);
+  if (!sol || sol.skills.includes(skill)) return;
+  sol.skills.push(skill);
+  saveCampaign(campaign);
+
+  txt.value = '';
+  sel.value = '';
+  renderCampaign();
+}
+
+function removeSkill(soldierName, skillIndex) {
+  const campaign = loadCampaign();
+  const sol = campaign.soldiers.find(s => s.name === soldierName);
+  if (!sol) return;
+  sol.skills.splice(skillIndex, 1);
+  saveCampaign(campaign);
+  renderCampaign();
+}
+
+function newCampaign() {
+  if (!confirm('すべてのキャンペーン記録を削除します。よろしいですか？')) return;
+  localStorage.removeItem('wfv_campaign');
+  renderCampaign();
+}
+
+function exportCampaign() {
+  const data = localStorage.getItem('wfv_campaign') || '{}';
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `wfv_campaign_${date}.json`;
+  a.click();
+}
+
+function importCampaign(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!confirm('現在のキャンペーンデータを上書きします。よろしいですか？')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      localStorage.setItem('wfv_campaign', JSON.stringify(data));
+      renderCampaign();
+    } catch {
+      alert('JSONの読み込みに失敗しました。');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ── Phase 1: KIA filter ──
+function getKIASoldierNames() {
+  const campaign = loadCampaign();
+  return new Set(campaign.soldiers.filter(s => s.isKIA).map(s => s.name));
+}
+
+init();
+</script>
+</body>
+</html>

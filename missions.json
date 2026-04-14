@@ -1,0 +1,122 @@
+[
+  {
+    "id": "V-100 (Fortunate Son)",
+    "name": "V-100 (Fortunate Son)",
+    "extensionGroup": "コア",
+    "image": "V-100 (Fortunate Son).png"
+  },
+  {
+    "id": "V-101 (Run Through The Jungle)",
+    "name": "V-101 (Run Through The Jungle)",
+    "extensionGroup": "コア",
+    "image": "V-101 (Run Through The Jungle).png"
+  },
+  {
+    "id": "V-102 (For What It's Worth)",
+    "name": "V-102 (For What It's Worth)",
+    "extensionGroup": "コア",
+    "image": "V-102 (For What It's Worth).png"
+  },
+  {
+    "id": "V-103 (Gimme Shelter)",
+    "name": "V-103 (Gimme Shelter)",
+    "extensionGroup": "コア",
+    "image": "V-103 (Gimme Shelter).png"
+  },
+  {
+    "id": "V-104 (We Gotta Get Out Of This Place)",
+    "name": "V-104 (We Gotta Get Out Of This Place)",
+    "extensionGroup": "コア",
+    "image": "V-104 (We Gotta Get Out Of This Place).png"
+  },
+  {
+    "id": "V-105 (War Pigs)",
+    "name": "V-105 (War Pigs)",
+    "extensionGroup": "コア",
+    "image": "V-105 (War Pigs).png"
+  },
+  {
+    "id": "V-106 (Paint It Black)",
+    "name": "V-106 (Paint It Black)",
+    "extensionGroup": "コア",
+    "image": "V-106 (Paint It Black).png"
+  },
+  {
+    "id": "V-107 (Riders of the Storm)",
+    "name": "V-107 (Riders of the Storm)",
+    "extensionGroup": "コア",
+    "image": "V-107 (Riders of the Storm).png"
+  },
+  {
+    "id": "5-025",
+    "name": "Crimson and Clover",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-025 (Crimson and Clover).png"
+  },
+  {
+    "id": "5-026",
+    "name": "Come Togrther",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-026 (Come Togrther).png"
+  },
+  {
+    "id": "5-027",
+    "name": "Bad Moon Rising",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-027 (Bad Moon Rising).png"
+  },
+  {
+    "id": "5-028",
+    "name": "Suspicious Minds",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-028 (Suspicious Minds).png"
+  },
+  {
+    "id": "8-042",
+    "name": "Joy to the World",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-042 (Joy to the World).png"
+  },
+  {
+    "id": "8-043",
+    "name": "Maggie May",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-043 (Maggie May).png"
+  },
+  {
+    "id": "8-044",
+    "name": "Take Me Home, Country Roads",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-044 (Take Me Home, Country Roads).png"
+  },
+  {
+    "id": "8-045",
+    "name": "One Bad Apple",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-045 (One Bad Apple).png"
+  },
+  {
+    "id": "8-046",
+    "name": "Knock Three Times",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-046 (Knock Three Times).png"
+  },
+  {
+    "id": "8-047",
+    "name": "Tired of Being Alone",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-047 (Tired of Being Alone).png"
+  },
+  {
+    "id": "8-048",
+    "name": "You've Got a Friend",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-048 (You've Got a Friend).png"
+  },
+  {
+    "id": "8-049",
+    "name": "Mr. Big Stuff",
+    "extensionGroup": "South Vietnamese",
+    "image": "8-049 (Mr. Big Stuff).png"
+  }
+]

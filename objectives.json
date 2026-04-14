@@ -1,0 +1,74 @@
+[
+  {
+    "id": "V-108 (Stand By Me)",
+    "name": "V-108 (Stand By Me)",
+    "extensionGroup": "コア",
+    "image": "V-108 (Stand By Me).png"
+  },
+  {
+    "id": "V-109 (The Sound of Silence)",
+    "name": "V-109 (The Sound of Silence)",
+    "extensionGroup": "コア",
+    "image": "V-109 (The Sound of Silence).png"
+  },
+  {
+    "id": "V-110 (Break on Through)",
+    "name": "V-110 (Break on Through)",
+    "extensionGroup": "コア",
+    "image": "V-110 (Break on Through).png"
+  },
+  {
+    "id": "V-111 (California Dreamin')",
+    "name": "V-111 (California Dreamin')",
+    "extensionGroup": "コア",
+    "image": "V-111 (California Dreamin').png"
+  },
+  {
+    "id": "V-112 (Satisfaction)",
+    "name": "V-112 (Satisfaction)",
+    "extensionGroup": "コア",
+    "image": "V-112 (Satisfaction).png"
+  },
+  {
+    "id": "V-113 (All Along The Watchtower)",
+    "name": "V-113 (All Along The Watchtower)",
+    "extensionGroup": "コア",
+    "image": "V-113 (All Along The Watchtower).png"
+  },
+  {
+    "id": "V-114 (The Dock of the Bay)",
+    "name": "V-114 (The Dock of the Bay)",
+    "extensionGroup": "コア",
+    "image": "V-114 (The Dock of the Bay).png"
+  },
+  {
+    "id": "V-115 (House of the Rising Sun)",
+    "name": "V-115 (House of the Rising Sun)",
+    "extensionGroup": "コア",
+    "image": "V-115 (House of the Rising Sun).png"
+  },
+  {
+    "id": "5-039",
+    "name": "Everyday People",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-039 (Everyday People).png"
+  },
+  {
+    "id": "5-040",
+    "name": "Three Dog Night",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-040 (Three Dog Night).png"
+  },
+  {
+    "id": "5-041",
+    "name": "Proud Mary",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-041 (Proud Mary).png"
+  },
+  {
+    "id": "5-042",
+    "name": "Sweet Caroline",
+    "extensionGroup": "拡張5 MACV-SOG",
+    "image": "5-042 (Sweet Caroline).png"
+  }
+]
