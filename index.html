@@ -707,6 +707,98 @@ select option { background: var(--surface2); }
 .history-xp { color: var(--accent); min-width: 40px; text-align: right; }
 .history-survived { font-size: 11px; }
 
+/* ── Card Image Display ── */
+.card-img-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 10px 10px 4px;
+}
+
+.card-img {
+  width: 150px;
+  height: 260px;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: zoom-in;
+  display: block;
+}
+
+.card-fallback {
+  width: 150px;
+  height: 260px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  text-align: center;
+}
+.card-fallback.type-ps  { background: #1a3a2a; border: 1px solid #2d6b45; }
+.card-fallback.type-ts  { background: #1a2a3a; border: 1px solid #2d4a6b; }
+.card-fallback.type-nps { background: #3a2e10; border: 1px solid #6b5520; }
+.card-fallback.type-sqs { background: #2a2a2a; border: 1px solid #4a4a4a; }
+.card-fallback .fb-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; background: rgba(255,255,255,0.1); color: var(--text-dim); }
+.card-fallback .fb-name  { font-size: 13px; font-weight: 700; color: var(--text); }
+.card-fallback .fb-meta  { font-size: 11px; color: var(--text-dim); }
+
+/* Card image modal */
+#card-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+#card-modal.open { display: flex; }
+#card-modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+
+/* Card hover preview (centered) */
+#card-hover-preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8500;
+  pointer-events: none;
+  display: none;
+}
+#card-hover-preview img {
+  width: 225px;
+  height: 390px;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+}
+
+/* Gear image preview (centered) */
+#gear-img-preview {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8500;
+  pointer-events: none;
+  display: none;
+}
+#gear-img-preview img {
+  width: 225px;
+  height: 390px;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+}
+
 .empty-campaign {
   padding: 48px 16px;
   text-align: center;
@@ -839,6 +931,75 @@ select option { background: var(--surface2); }
 </div>
 
 <script>
+// ── Card Image Helpers ──
+function getCardImageUrl(image) {
+  if (!image) return null;
+  return `images/cards/${image}`;
+}
+
+function buildCardImgHTML(soldier, clickable = true) {
+  const url = getCardImageUrl(soldier.image);
+  const typeClass = 'type-' + (soldier.type || 'ps').toLowerCase();
+  const escapedUrl = url ? url.replace(/\\/g, '/').replace(/'/g, "\\'") : '';
+  const clickAttr = clickable && url ? `onclick="openCardModal('${escapedUrl}', event)"` : '';
+  if (url) {
+    return `<div class="card-img-wrap">
+      <img class="card-img" src="${url}" alt="${soldier.name}" ${clickAttr}
+        onmouseenter="showCardHoverPreview('${escapedUrl}')"
+        onmouseleave="hideCardHoverPreview()"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="card-fallback ${typeClass}" style="display:none">
+        <span class="fb-badge">${soldier.type || ''}</span>
+        <span class="fb-name">${soldier.name}</span>
+        <span class="fb-meta">${soldier.nation || ''}</span>
+      </div>
+    </div>`;
+  }
+  return `<div class="card-img-wrap">
+    <div class="card-fallback ${typeClass}">
+      <span class="fb-badge">${soldier.type || ''}</span>
+      <span class="fb-name">${soldier.name}</span>
+      <span class="fb-meta">${soldier.nation || ''}</span>
+    </div>
+  </div>`;
+}
+
+function openCardModal(url, e) {
+  if (e) e.stopPropagation();
+  hideCardHoverPreview();
+  document.getElementById('card-modal-img').src = url;
+  document.getElementById('card-modal').classList.add('open');
+}
+
+function closeCardModal() {
+  document.getElementById('card-modal').classList.remove('open');
+}
+
+function showCardHoverPreview(url) {
+  const el = document.getElementById('card-hover-preview');
+  const img = document.getElementById('card-hover-img');
+  img.src = url;
+  img.onerror = () => { el.style.display = 'none'; };
+  el.style.display = 'block';
+}
+
+function hideCardHoverPreview() {
+  document.getElementById('card-hover-preview').style.display = 'none';
+}
+
+// Gear image preview
+function showGearPreview(url) {
+  const el = document.getElementById('gear-img-preview');
+  const img = document.getElementById('gear-preview-img');
+  img.src = url;
+  img.onerror = () => { el.style.display = 'none'; };
+  el.style.display = 'block';
+}
+
+function hideGearPreview() {
+  document.getElementById('gear-img-preview').style.display = 'none';
+}
+
 // ── Data ──
 let SOLDIERS = [];
 let GEAR = [];
@@ -1080,6 +1241,7 @@ function renderSoldierInfo(i) {
   const loadoutClass = hasLoadout && loadoutUsed > loadoutMax ? 'over' : hasLoadout && loadoutUsed > loadoutMax * 0.8 ? 'warn' : '';
 
   el.innerHTML = `
+    ${buildCardImgHTML(s)}
     <div class="soldier-stats">
       <div class="stat"><span class="stat-label">RP</span><span class="stat-value" style="color:var(--accent)">${s.rp}</span></div>
       ${s.hp != null ? `<div class="stat"><span class="stat-label">HP</span><span class="stat-value">${s.hp}</span></div>` : ''}
@@ -1120,6 +1282,11 @@ function refreshGearList(i) {
       <span class="gear-rp">RP:${g.rp}</span>
     `;
     item.addEventListener('click', () => toggleGear(i, g));
+    if (g.image) {
+      const url = getCardImageUrl(g.image);
+      item.addEventListener('mouseenter', () => showGearPreview(url));
+      item.addEventListener('mouseleave', hideGearPreview);
+    }
     el.appendChild(item);
   });
 }
@@ -1213,6 +1380,7 @@ function startMission() {
         name: s.name,
         type: s.type,
         nation: s.nation,
+        image: s.image || null,
         notes: s.notes || '',
         maxHp: hasHP ? s.hp : null,
         currentHp: hasHP ? s.hp : null,
@@ -1222,6 +1390,7 @@ function startMission() {
           id: g.id,
           name: g.name,
           category: g.category,
+          image: g.image || null,
           consumable: g.consumable || false,
           expended: false,
         })),
@@ -1340,14 +1509,19 @@ function buildSoldierCard(sol, i) {
   let gearHTML = '';
   if (sol.gear.length > 0) {
     const gearItems = sol.gear.map((g, gi) => {
+      const imgUrl = g.image ? getCardImageUrl(g.image).replace(/'/g, "\\'") : null;
+      const hoverAttrs = imgUrl
+        ? `onmouseenter="showGearPreview('${imgUrl}')" onmouseleave="hideGearPreview()"`
+        : '';
+      const nameStyle = imgUrl ? 'cursor:help' : '';
       if (!g.consumable) {
-        return `<div class="sc-gear-item">
-          <span class="sc-gear-name">${g.name}</span>
+        return `<div class="sc-gear-item" ${hoverAttrs}>
+          <span class="sc-gear-name" style="${nameStyle}">${g.name}</span>
           <span class="sc-gear-cat">${g.category}</span>
         </div>`;
       }
-      return `<div class="sc-gear-item${g.expended ? ' expended' : ''}">
-        <span class="sc-gear-name">${g.name}</span>
+      return `<div class="sc-gear-item${g.expended ? ' expended' : ''}" ${hoverAttrs}>
+        <span class="sc-gear-name" style="${nameStyle}">${g.name}</span>
         <span class="sc-gear-cat">${g.category}</span>
         ${!g.expended ? `<button class="expend-btn" onclick="p2Expend(${i}, ${gi})">使用</button>` : '<span style="font-size:10px;color:var(--text-dim)">Expended</span>'}
       </div>`;
@@ -1367,6 +1541,7 @@ function buildSoldierCard(sol, i) {
     : '';
 
   card.innerHTML = `
+    ${buildCardImgHTML(sol)}
     <div class="sc-header">
       <span class="sc-name">${sol.name}</span>
       <span class="type-badge">${sol.type}</span>
@@ -1710,5 +1885,14 @@ function getKIASoldierNames() {
 
 init();
 </script>
+
+<!-- Card image modal -->
+<div id="card-modal" onclick="closeCardModal()">
+  <img id="card-modal-img" src="" alt="">
+</div>
+<!-- Card hover preview (centered) -->
+<div id="card-hover-preview"><img id="card-hover-img" src="" alt=""></div>
+<!-- Gear image preview tooltip -->
+<div id="gear-img-preview"><img id="gear-preview-img" src="" alt=""></div>
 </body>
 </html>

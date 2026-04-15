@@ -1,6 +1,23 @@
-images/
+# Game asset source files (large binaries, generated from these)
+vmdx/
+*.vmod
 *.zip
 .claude/
+
+# Extracted images — root level duplicates (app uses images/cards/ only)
+images/*.png
+images/*.gif
+images/*.jpg
+
+# Decorative/unused card images (not referenced by app)
+images/cards/00-*
+images/cards/+*
+images/cards/-*
+images/cards/Marqueur*
+images/cards/*VCElite*
+images/cards/*_recto.png
+images/cards/*_verso.png
+images/cards/icon_*
 Phase2_指示書.md
 WFV_HelperApp_計画書.md
 ja_English.json
